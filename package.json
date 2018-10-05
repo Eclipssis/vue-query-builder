@@ -1,5 +1,5 @@
 {
-  "name": "vue-query-builder",
+  "name": "vue-query-builder-advantiss",
   "version": "0.6.1",
   "main": "./dist/VueQueryBuilder.common.js",
   "scripts": {

@@ -134,13 +134,18 @@ export default {
     this.$watch(
       'query',
       newQuery => {
-        this.$emit('input', deepClone(newQuery));
+        this.$emit('input', newQuery);
       }, {
       deep: true
     });
 
     if ( typeof this.$options.propsData.value !== "undefined" ) {
       this.query = Object.assign(this.query, this.$options.propsData.value);
+    }
+  },
+  watch: {
+    value (val) {
+      this.query = val
     }
   }
 }
