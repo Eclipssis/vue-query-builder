@@ -2,6 +2,7 @@
   <div class="vqb-group" :class="classObject">
     <div class="vqb-group-heading" :class="{ 'panel-heading': styled }">
       <div class="match-type-container" :class="{ 'form-inline': styled }">
+        
         <div :class="{ 'form-group': styled }">
           <label for="vqb-match-type">{{ labels.matchType }}</label>
           <select id="vqb-match-type" :class="{ 'form-control': styled }" v-model="query.logicalOperator">
@@ -9,22 +10,12 @@
             <option>{{ labels.matchTypeAny }}</option>
           </select>
         </div>
+        <slot></slot>
         <button type="button" :class="{ 'close pull-right': styled }" v-if="this.depth > 1" @click="remove" v-html="labels.removeGroup"></button>
       </div>
     </div>
 
     <div class="vqb-group-body" :class="{ 'panel-body': styled }">
-      <div class="rule-actions" :class="{ 'form-inline': styled }">
-        <div :class="{ 'form-group': styled }">
-
-          <select v-model="selectedRule" :class="{ 'form-control': styled }">
-            <option v-for="(rule, index) in rules" :key="index" :value="rule">{{ rule.label }}</option>
-          </select>
-
-          <button type="button" @click="addRule" :class="{ 'btn btn-default': styled }" v-html="labels.addRule"></button>
-          <button type="button" :class="{ 'btn btn-default': styled }" v-if="this.depth < this.maxDepth" @click="addGroup" v-html="labels.addGroup"></button>
-        </div>
-      </div>
 
       <div class="children">
         <component
@@ -45,6 +36,22 @@
         </component>
       </div>
     </div>
+
+    <div class="vqb-group-footer">
+      <div class="rule-actions" :class="{ 'form-inline': styled }">
+        <div :class="{ 'form-group': styled }">
+
+          <select v-model="selectedRule" :class="{ 'form-control': styled }">
+            <option v-for="(rule, index) in rules" :key="index" :value="rule">{{ rule.label }}</option>
+          </select>
+
+          <button type="button" @click="addRule" :class="{ 'btn btn-default': styled }" v-html="labels.addRule"></button>
+          <button type="button" :class="{ 'btn btn-default': styled }" v-if="this.depth < this.maxDepth" @click="addGroup" v-html="labels.addGroup"></button>
+        </div>
+      </div>
+    </div>
+    
+
   </div>
 </template>
 
