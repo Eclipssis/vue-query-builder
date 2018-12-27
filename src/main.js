@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import VueQueryBuilder from './VueQueryBuilder.vue';
+import App from './App.vue';
 
 Vue.config.productionTip = false;
 
@@ -43,7 +43,8 @@ let rules = [
 new Vue({
   el: '#app',
 
-  components: { VueQueryBuilder },
+  components: { App },
+  template: '<App/>',
 
   data: {
     rules: rules,

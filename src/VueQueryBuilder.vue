@@ -9,8 +9,11 @@
       :depth="depth"
       :styled="styled"
       :labels="mergedLabels"
+      :buttonLocation='buttonLocation'
       type="query-builder-group"
-      ></query-builder-group>
+      >
+      <slot></slot>
+      </query-builder-group>
   </div>
 </template>
 
@@ -55,6 +58,7 @@ export default {
         return value >= 1
       }
     },
+    buttonLocation: String,
     value: Object
   },
 
@@ -135,9 +139,7 @@ export default {
       'query',
       newQuery => {
         this.$emit('input', newQuery);
-      }, {
-      deep: true
-    });
+      });
 
     if ( typeof this.$options.propsData.value !== "undefined" ) {
       this.query = Object.assign(this.query, this.$options.propsData.value);
