@@ -1,5 +1,5 @@
 <template>
-  <div class="vqb-rule" :class="{ 'panel panel-default form-inline': styled }">
+  <div class="vqb-rule" :class="{ 'panel panel-default form-inline': styled, 'custom-component': isCustomComponent }">
     <div :class="{ 'form-group': styled }">
       <label>{{ rule.label }}</label>
 
@@ -7,13 +7,13 @@
         <option v-for="operand in rule.operands">{{ operand }}</option>
       </select>
 
-      <select v-if="! isMultipleChoice" v-model="query.selectedOperator" :class="{ 'form-control': styled }">
+      <select v-if="query.selectedOperator !== undefined && !isMultipleChoice" v-model="query.selectedOperator" :class="{ 'form-control': styled }">
         <option v-for="operator in rule.operators" v-bind:value="operator">
           {{ operator }}
         </option>
       </select>
 
-      <input :class="{ 'form-control': styled }" v-if="rule.inputType === 'text'" type="text" v-model="query.value" :placeholder="labels.textInputPlaceholder">
+      <input :class="{ 'form-control': styled }" v-if="hideInputForCustomOperators && rule.inputType === 'text'" type="text" v-model="query.value" :placeholder="labels.textInputPlaceholder">
       <input :class="{ 'form-control': styled }" v-if="rule.inputType === 'number'" type="number" v-model="query.value">
 
       <template v-if="isCustomComponent">
@@ -80,6 +80,9 @@ export default {
   },
 
   computed: {
+    hideInputForCustomOperators () {
+      return !(this.query.selectedOperator === 'is empty' || this.query.selectedOperator === 'is not empty')
+    },
     isMultipleChoice () {
       return ['radio', 'checkbox', 'select'].indexOf(this.rule.inputType) >= 0;
     },
