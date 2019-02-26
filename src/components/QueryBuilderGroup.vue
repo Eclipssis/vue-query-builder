@@ -32,8 +32,8 @@
           :depth="depth + 1"
           :styled="styled"
           :labels="labels"
-          :dirty="validateCollection && validateCollection.$dirty"
-          :validator='validateCollection && validateCollection.query.children[index]'
+          :dirty="validator.$dirty"
+          :validator='validator.query.children[index]'
           v-on:child-deletion-requested="removeChild">
         </component>
           <!-- :validate-collection='validateCollection.value.children[index]' -->
@@ -70,7 +70,7 @@ export default {
     QueryBuilderRule
   },
 
-  props: ['ruleTypes', 'type', 'query', 'rules', 'index', 'maxDepth', 'depth', 'styled', 'labels', 'validateCollection'],
+  props: ['ruleTypes', 'type', 'query', 'rules', 'index', 'maxDepth', 'depth', 'styled', 'labels', 'validator'],
 
   methods: {
     ruleById (ruleId) {

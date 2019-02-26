@@ -10,7 +10,7 @@
       :depth="depth"
       :styled="styled"
       :labels="mergedLabels"
-      :validate-collection="$v"
+      :validator="$v"
       :buttonLocation='buttonLocation'
       type="query-builder-group"
       >
@@ -137,11 +137,9 @@ export default {
     }
   },
   validations() {
-    console.log('CREATE VALIDATOR')
     return this.queryBuilderValidation()
   },
   mounted () {
-    console.log('CREATE GROUP')
     this.$watch(
       'query',
       newQuery => {
@@ -183,8 +181,7 @@ export default {
           children: this.value.children ? {...this.value.children.map(this.createValidateLevel)} : {}
         }
       }
-
-      console.log('FFF:', validator)
+      
       return validator
     }
   },
