@@ -1,6 +1,7 @@
 <template>
   <div class="vqb-rule" :class="{ 'panel panel-default form-inline': styled, 'custom-component': isCustomComponent }">
-    <div :class="{ 'form-group': styled }">
+    {{validator}}
+    <div :class="{ 'form-group': styled, 'invalid-group': invalidInput }">
       <label>{{ rule.label }}</label>
 
       <select v-if="typeof rule.operands !== 'undefined'" v-model="query.selectedOperand" :class="{ 'form-control': styled }">
@@ -17,7 +18,7 @@
       <input :class="{ 'form-control': styled }" v-if="rule.inputType === 'number'" type="number" v-model="query.value">
 
       <template v-if="isCustomComponent">
-        <component :value="query.value" @input="updateQuery" :is="rule.component"></component>
+        <component :value="query.value" @input="updateQuery" :is="rule.component" :dirty="dirty" :validator="validator"></component>
       </template>
 
       <div class="checkbox" v-if="rule.inputType === 'checkbox'">
@@ -39,10 +40,10 @@
         v-model="query.value">
 
         <template v-for="(option, option_key) in selectOptions">
-          <option v-if="!Array.isArray(option)" :value="option.value">
+          <option v-if="!Array.isArray(option)" :value="option.value" :key="option_key">
             {{ option.label }}
           </option>
-          <optgroup v-if="Array.isArray(option)" :label="option_key">
+          <optgroup v-if="Array.isArray(option)" :label="option_key" :key="option_key">
             <option v-for="sub_option in option" :value="sub_option.value">{{ sub_option.label }}</option>
           </optgroup>
         </template>
@@ -51,6 +52,13 @@
 
       <button type="button" :class="{ 'close pull-right': styled }" @click="remove" v-html="labels.removeRule"></button>
     </div>
+    
+    <div v-if="!isCustomComponent && rule.validateMessage && hideInputForCustomOperators">
+      <span v-for="(item, index) in rule.validateMessage" :key="index">
+        <template v-if="dirty && validator && !validator.query.value[Object.keys(item)]">{{item[Object.keys(item)]}}</template>
+      </span>
+    </div>
+    
   </div>
 </template>
 
@@ -60,7 +68,7 @@ import deepClone from '../utilities.js';
 export default {
   name: "query-builder-rule",
 
-  props: ['query', 'index', 'rule', 'styled', 'labels'],
+  props: ['query', 'index', 'rule', 'styled', 'labels', 'validator', 'dirty'],
 
   beforeMount () {
     if (this.rule.type === 'custom-component') {
@@ -79,7 +87,16 @@ export default {
     },
   },
 
+  data() {
+    return {
+      validateData: this.validator
+    }
+  },
+
   computed: {
+    invalidInput () {
+      return this.dirty && !this.isCustomComponent && this.rule.validator && this.validator && this.validator.query.value.$invalid
+    },
     hideInputForCustomOperators () {
       return !(this.query.selectedOperator === 'is empty' || this.query.selectedOperator === 'is not empty')
     },

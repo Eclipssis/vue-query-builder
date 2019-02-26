@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import App from './App.vue';
+import Vuelidate from 'vuelidate'
 
+Vue.use(Vuelidate)
 Vue.config.productionTip = false;
 
 let rules = [
@@ -52,13 +54,13 @@ new Vue({
   },
 
   methods: {
-    updateQuery: function(value) {
+    updateQuery: function (value) {
       this.output = value;
     }
   },
 
   computed: {
-    outputFormatted: function() {
+    outputFormatted: function () {
       return JSON.stringify(this.output, null, 2);
     }
   }

@@ -1,64 +1,81 @@
 <template>
   <div id="app">
-    
     <vue-query-builder
+      ref="queryBuilder"
       :rules="rules"
-      :max-depth="2"
+      :max-depth="4"
       :labels="labels"
       v-model="query">
       </vue-query-builder>
       <pre>{{ JSON.stringify(query, null, 2) }}</pre>
+      <input type="text" v-model="haha">
     <button @click="chef">CLICK</button>
   </div>
 </template>
 
 <script>
   
+  
+  import DateRangePicker from './components/DatePicker.vue';
   import VueQueryBuilder from './VueQueryBuilder.vue';
+  const { required, minLength } = require('vuelidate/lib/validators')
+  
+  function ruleForDate (date) {
+    if(date) {
+      return date.from.length > 0 && date.to.length > 0
+    } else {
+      return false
+    }
+  }
 
   let rules = [
-  {
-    type: 'text',
-    id: 'first-name',
-    label: 'First Name'
-  },
-  {
-    type: 'text',
-    id: 'last-name',
-    label: 'Last Name'
-  },
-  {
-    type: 'radio',
-    id: 'plan-type',
-    label: 'Plan Type',
-    choices: [
-      { label: 'Standard', value: 'standard' },
-      { label: 'Premium', value: 'premium' }
-    ]
-  },
-  {
-    type: 'custom-component',
-    id: 'select',
-    label: 'Custom',
-    operators: [],
-    choices: [
-      { label: 'red', value: 'Red' },
-      { label: 'orange', value: 'Orange' },
-      { label: 'yellow', value: 'Yellow' },
-      { label: 'green', value: 'Green' },
-      { label: 'blue', value: 'Blue' },
-      { label: 'indigo', value: 'Indigo' },
-      { label: 'violet', value: 'Violet' }
-    ]
-  }
-];
-
+    {
+      type: 'text',
+      id: 'first-name',
+      label: 'First Name',
+      default: '',
+      validateMessage:  [
+        {required: "Field is requaried"}
+      ],
+      validator: { required }
+    },
+    {
+      type: 'text',
+      id: 'last-name',
+      label: 'Last Name',
+      validateMessage:  [
+        {required: "Field is requaried"}
+      ],
+      validator: { required }
+    },
+    {
+      type: 'radio',
+      id: 'plan-type',
+      label: 'Plan Type',
+      choices: [
+        { label: 'Standard', value: 'standard' },
+        { label: 'Premium', value: 'premium' }
+      ]
+    },
+    {
+      type: 'custom-component',
+      id: 'select',
+      label: 'Custom',
+      operators: [],
+      component: DateRangePicker,
+      validateMessage:  [
+        { ruleForDate: "Field is requaried" }
+      ],
+      validator: { ruleForDate }
+    }
+  ];
 
   export default {
     name: 'App',
-    components: { VueQueryBuilder },
+    components: { VueQueryBuilder, DateRangePicker },
     data () {
       return {
+        haha: 'so nice',
         rules: rules,
         query: {},
         labels: {
@@ -73,32 +90,10 @@
         }
       }
     },
+
     methods: {
       chef () {
-        let q = {
-          "logicalOperator": "All",
-          "children": [
-            {
-              "type": "query-builder-rule",
-              "query": {
-                "rule": "first-name",
-                "selectedOperator": "equals",
-                "selectedOperand": "First Name",
-                "value": null
-              }
-            },
-            {
-              "type": "query-builder-rule",
-              "query": {
-                "rule": "select",
-                "selectedOperator": "=",
-                "selectedOperand": "Color",
-                "value": "Red"
-              }
-            }
-          ]
-        }
-        this.query = q
+        this.$refs.queryBuilder.$v.$touch()
       }
     }, 
     computed: {

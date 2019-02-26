@@ -1,5 +1,6 @@
 <template>
   <div class="vue-query-builder" :class="{ 'vue-query-builder-styled': styled }">
+    
     <query-builder-group
       :index="0"
       :query.sync="query"
@@ -9,6 +10,7 @@
       :depth="depth"
       :styled="styled"
       :labels="mergedLabels"
+      :validate-collection="$v"
       :buttonLocation='buttonLocation'
       type="query-builder-group"
       >
@@ -20,6 +22,7 @@
 <script>
 import QueryBuilderGroup from './components/QueryBuilderGroup.vue';
 import deepClone from './utilities.js';
+const { required } = require('vuelidate/lib/validators')
 
 var defaultLabels = {
   matchType: "Match Type",
@@ -133,8 +136,12 @@ export default {
       return mergedRules;
     }
   },
-
+  validations() {
+    console.log('CREATE VALIDATOR')
+    return this.queryBuilderValidation()
+  },
   mounted () {
+    console.log('CREATE GROUP')
     this.$watch(
       'query',
       newQuery => {
@@ -149,7 +156,38 @@ export default {
     value (val) {
       this.query = val
     }
-  }
+  },
+  methods: {
+    
+    createValidateLevel (filterItem) {
+      let validationsRules = filterItem.type === "query-builder-rule" ? this.rules.find(item => {
+        return item.id === filterItem.query.rule
+      }) : undefined
+
+      let validator = {
+        query: {
+          children: filterItem.query.children ? {...filterItem.query.children.map(this.createValidateLevel)} : {}
+        }
+      }
+
+      if(validationsRules && validationsRules.validator) {
+        validator.query.value = validationsRules.validator
+      }
+      
+       return validator
+    },
+    queryBuilderValidation () {
+      
+      let validator = {
+        query: {
+          children: this.value.children ? {...this.value.children.map(this.createValidateLevel)} : {}
+        }
+      }
+
+      console.log('FFF:', validator)
+      return validator
+    }
+  },
 }
 </script>
 
