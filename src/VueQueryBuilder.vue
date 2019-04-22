@@ -158,7 +158,8 @@ export default {
   methods: {
     
     createValidateLevel (filterItem) {
-      let validationsRules = filterItem.type === "query-builder-rule" ? this.rules.find(item => {
+      const validateCondition = filterItem.type === "query-builder-rule" && filterItem.query.selectedOperator !== "is empty" && filterItem.query.selectedOperator !== "is not empty"
+      let validationsRules = validateCondition ? this.rules.find(item => {
         return item.id === filterItem.query.rule
       }) : undefined
 

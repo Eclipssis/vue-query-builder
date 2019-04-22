@@ -1,6 +1,6 @@
 <template>
   <div class="vqb-rule" :class="{ 'panel panel-default form-inline': styled, 'custom-component': isCustomComponent }">
-    {{validator}}
+    
     <div :class="{ 'form-group': styled, 'invalid-group': invalidInput }">
       <label>{{ rule.label }}</label>
 
@@ -95,7 +95,7 @@ export default {
 
   computed: {
     invalidInput () {
-      return this.dirty && !this.isCustomComponent && this.rule.validator && this.validator && this.validator.query.value.$invalid
+      return this.dirty && !this.isCustomComponent && this.rule.validator && this.validator && this.validator.query.value && this.validator.query.value.$invalid
     },
     hideInputForCustomOperators () {
       return !(this.query.selectedOperator === 'is empty' || this.query.selectedOperator === 'is not empty')
