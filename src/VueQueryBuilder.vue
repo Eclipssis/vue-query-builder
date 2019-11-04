@@ -26,8 +26,44 @@ const { required } = require('vuelidate/lib/validators')
 
 var defaultLabels = {
   matchType: "Match Type",
-  matchTypeAll: "All",
-  matchTypeAny: "Any",
+  matchTypes: [
+    {"id": "all", "label": "All"},
+    {"id": "any", "label": "Any"},
+  ],
+  ruleTypest: [
+    {
+      text: 'equals',
+      value: 'equals'
+    },
+    {
+      text: 'does not equal',
+      value: 'does not equal'
+    },
+    {
+      text: 'contains',
+      value: 'contains'
+    },
+    {
+      text: 'does not contain',
+      value: 'does not contain'
+    },
+    {
+      text: 'is empty',
+      value: 'is empty'
+    },
+    {
+      text: 'is not empty',
+      value: 'is not empty'
+    },
+    {
+      text: 'begins with',
+      value: 'begins with'
+    },
+    {
+      text: 'ends with',
+      value: 'ends with'
+    }
+  ],
   addRule: "Add Rule",
   removeRule: "&times;",
   addGroup: "Add Group",
@@ -69,12 +105,12 @@ export default {
     return {
       depth: 1,
       query: {
-        logicalOperator: "All",
+        logicalOperator: this.labels.matchTypes[0].id,
         children: []
       },
       ruleTypes: {
         "text": {
-          operators: ['equals','does not equal','contains','does not contain','is empty','is not empty','begins with','ends with'],
+          operators: this.labels.ruleTypest,
           inputType: "text",
           id: "text-field"
         },
@@ -101,7 +137,7 @@ export default {
           id: "checkbox-field"
         },
         "select": {
-          operators: ['=','<>'],
+          operators: [],
           choices: [],
           inputType: "select",
           id: "select-field"
@@ -143,8 +179,22 @@ export default {
     this.$watch(
       'query',
       newQuery => {
-        this.$emit('input', newQuery);
-      });
+        if (JSON.stringify(newQuery) !== JSON.stringify(this.value)) {
+        this.$emit('input', deepClone(newQuery));
+        }
+      }, {
+      deep: true
+    });
+
+    this.$watch(
+      'value',
+      newValue => {
+        if (JSON.stringify(newValue) !== JSON.stringify(this.query)) {
+          this.query = deepClone(newValue);
+        }
+      }, {
+      deep: true
+    });
 
     if ( typeof this.$options.propsData.value !== "undefined" ) {
       this.query = Object.assign(this.query, this.$options.propsData.value);
@@ -153,7 +203,7 @@ export default {
   watch: {
     value (val) {
       this.query = val
-    }
+  }
   },
   methods: {
     

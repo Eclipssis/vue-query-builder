@@ -9,13 +9,14 @@
       </select>
 
       <select v-if="query.selectedOperator !== undefined && !isMultipleChoice" v-model="query.selectedOperator" :class="{ 'form-control': styled }">
-        <option v-for="operator in rule.operators" v-bind:value="operator">
-          {{ operator }}
+        <option v-for="operator in rule.operators" v-bind:value="operator.value">
+          {{ operator.text }}
         </option>
       </select>
 
-      <input :class="{ 'form-control': styled }" v-if="hideInputForCustomOperators && rule.inputType === 'text'" type="text" v-model="query.value" :placeholder="labels.textInputPlaceholder">
+      <input :class="{ 'form-control': styled }" v-if="hideInputForCustomOperators && rule.inputType === 'text'" type="text" v-model="query.value" :placeholder="labels.textInputPlaceholder" @input="changeInputName">
       <input :class="{ 'form-control': styled }" v-if="rule.inputType === 'number'" type="number" v-model="query.value">
+      <input :class="{ 'form-control': styled }" v-if="rule.inputType === 'date'" type="date" v-model="query.value">
 
       <template v-if="isCustomComponent">
         <component :value="query.value" @input="updateQuery" :is="rule.component" :dirty="dirty" :validator="validator"></component>
@@ -55,7 +56,7 @@
     
     <div v-if="!isCustomComponent && rule.validateMessage && hideInputForCustomOperators">
       <span v-for="(item, index) in rule.validateMessage" :key="index">
-        <template v-if="dirty && validator && !validator.query.value[Object.keys(item)]">{{item[Object.keys(item)]}}</template>
+        <template v-if="validator && validator.$dirty && !validator.query.value[Object.keys(item)]">{{item[Object.keys(item)]}}</template>
       </span>
     </div>
     
@@ -77,6 +78,9 @@ export default {
   },
 
   methods: {
+    changeInputName () {
+      this.validator.$touch()
+    },
     remove: function() {
       this.$emit('child-deletion-requested', this.index);
     },
@@ -95,7 +99,7 @@ export default {
 
   computed: {
     invalidInput () {
-      return this.dirty && !this.isCustomComponent && this.rule.validator && this.validator && this.validator.query.value && this.validator.query.value.$invalid
+      return this.validator && this.validator.$dirty && !this.isCustomComponent && this.rule.validator && this.validator.query.value && this.validator.query.value.$invalid
     },
     hideInputForCustomOperators () {
       return !(this.query.selectedOperator === 'is empty' || this.query.selectedOperator === 'is not empty')
@@ -139,7 +143,10 @@ export default {
           updated_query.value = this.rule.choices[0].value;
       }
       if (this.rule.type === 'custom-component') {
-          updated_query.value = this.rule.default || null;
+        updated_query.value = null;
+        if(typeof this.rule.default !== 'undefined') {
+          updated_query.value = deepClone(this.rule.default)
+        }
       }
 
       this.$emit('update:query', updated_query);

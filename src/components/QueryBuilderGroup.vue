@@ -6,8 +6,7 @@
         <div :class="{ 'form-group': styled }">
           <label for="vqb-match-type">{{ labels.matchType }}</label>
           <select id="vqb-match-type" :class="{ 'form-control': styled }" v-model="query.logicalOperator">
-            <option>{{ labels.matchTypeAll }}</option>
-            <option>{{ labels.matchTypeAny }}</option>
+            <option v-for="(label, index) in labels.matchTypes" :key="index" :value="label.id">{{ label.label }}</option>
           </select>
         </div>
         <slot></slot>
@@ -92,7 +91,7 @@ export default {
         type: 'query-builder-rule',
         query: {
           rule: this.selectedRule.id,
-          selectedOperator: this.selectedRule.operators[0],
+          selectedOperator: this.selectedRule.operators.length > 0 ? this.selectedRule.operators[0].value : undefined,
           selectedOperand: typeof this.selectedRule.operands === "undefined" ? this.selectedRule.label : this.selectedRule.operands[0],
           value: null
         }
@@ -111,7 +110,7 @@ export default {
         updated_query.children.push({
           type: 'query-builder-group',
           query: {
-            logicalOperator: "All",
+            logicalOperator: this.labels.matchTypes[0].id,
             children: []
           }
         });

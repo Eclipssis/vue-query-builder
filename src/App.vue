@@ -80,8 +80,44 @@
         query: {},
         labels: {
           "matchType": "[[[Match Type]]]",
-          "matchTypeAll": "All",
-          "matchTypeAny": "Any",
+          "matchTypes": [
+            {"id": "all", "label": "[[[All]]]"},
+            {"id": "any", "label": "[[[Any]]]"}
+          ],
+          "ruleTypest": [
+            {
+              text: '[[[equals]]]',
+              value: 'equals'
+            },
+            {
+              text: 'does not equal',
+              value: 'does not equal'
+            },
+            {
+              text: 'contains',
+              value: 'contains'
+            },
+            {
+              text: 'does not contain',
+              value: 'does not contain'
+            },
+            {
+              text: 'is empty',
+              value: 'is empty'
+            },
+            {
+              text: 'is not empty',
+              value: 'is not empty'
+            },
+            {
+              text: 'begins with',
+              value: 'begins with'
+            },
+            {
+              text: 'ends with',
+              value: 'ends with'
+            }
+          ],
           "addRule": "Add Rule",
           "removeRule": "&times;",
           "addGroup": "Add Group",
